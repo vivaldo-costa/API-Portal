@@ -1,0 +1,213 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+// Modelo para a Tabela Utilizador
+model Utilizador {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+  email           String   @unique
+  nome            String
+  telefone        String?
+  genero          String
+  dataNascimento  DateTime?
+  empresa         String
+  departamento    String?
+  funcao          String?
+  tipoUtilizador  String
+  senha           String
+  fotoPerfil      String?
+  termoUso        Boolean
+  dataCriacao     DateTime @default(now())
+  estado          String?
+}
+
+
+// Modelo para a Tabela Empresa
+model Empresa {
+cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+nome            String
+nif             String
+logo            String?
+enderecos       String[]
+dataCriacao     DateTime @default(now())
+}
+
+// Modelo para a Tabela Funcao
+model Funcao {
+cod             String   @id @default(auto()) @map("_id") @db.ObjectId // ID da função
+nome            String
+}
+
+// tabela contrato
+model Contrato {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+  codEmpresa      String
+  tipoContratos   String
+  periodoContrato String
+  horas           String
+  horasAdicionais String ?
+  descricao       String ?
+  dataCriacao     DateTime @default(now())
+  dataInicio      DateTime
+  dataFim         DateTime
+  estado          String
+}
+
+// Modelo para a Tabela Relatorio
+model Relatorio {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+  codTicket       String?
+  resolucao       String
+  horaInicio      DateTime
+  horaFim         DateTime
+  versaoSql       String
+  instancia       String
+  servidor        String
+  nPostos         String
+  avServidor      String
+  avPostos        String
+  bkExterno       String
+  resolucaoCliente String?
+  tecnicoAuxiliar String?
+  aprovacao       String?
+  dataAprovacao   DateTime?
+  dataCriacao     DateTime @default(now())
+}
+
+//tabela pendentes
+model Pendente {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+  codTicket       String
+  codRelatorio    String
+  descricao       String
+  estado          String
+  dataCriacao     DateTime @default(now())
+}
+
+// Modelo para a Tabela Ticket
+model Ticket {
+  cod             String       @id @default(auto()) @map("_id") @db.ObjectId
+  codCliente      String?
+  codTecnico      String?
+  codEmpresa      String?
+  assunto         String
+  descricao       String
+  prioridade      String
+  departamento    String
+  produto         String
+  tipoAssistencia String?
+  estado          EstadoTicket
+  dataPrevista    DateTime?
+  dataExecutada   DateTime?
+  dataFecho       DateTime?
+  dataCriacao     DateTime @default(now())
+}
+
+
+// Enum para os Estados do Ticket
+enum EstadoTicket {
+  novo
+  aberto
+  execucao
+  resolvido
+  fechado
+}
+
+
+// Modelo para a Tabela Conversa
+model Conversa {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+  codTicket       String?
+  codUtilizador   String?
+  mensagem        String
+  anexos          String?
+  dataCriacao     DateTime @default(now())
+}
+
+
+// Modelo para a Tabela Anexos
+model Anexos {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+  codTicket       String?
+  anexo           String
+  dataCriacao     DateTime @default(now())
+}
+
+
+// Modelo para a Tabela Agenda
+model Agenda {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+  codTicket       String?
+  data            DateTime
+  hora            String
+  estado          EstadoAgenda
+  dataCriacao     DateTime @default(now())
+}
+
+// Enum para o Estado da Agenda
+enum EstadoAgenda {
+  agendado
+  cancelado
+  realizado
+}
+
+// Modelo para a Tabela PerguntasFrequentes
+model PerguntasFrequentes {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId // ID da pergunta
+  pergunta        String
+  resposta        String
+  dataCriacao     DateTime @default(now()) // Data de criação da pergunta
+}
+
+// Modelo para a Tabela Configuracoes
+model Configuracoes {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId // ID da configuração
+  logoMarca       String
+  iconeMarca      String
+  corPadrao       String
+  corbotao        String
+  corMenu         String
+  somNotificacao  String
+  dataCriacao     DateTime @default(now()) // Data de criação da configuração
+  estado          String
+  // Relacionamento
+  // Nenhum relacionamento específico
+}
+
+//Modelo para a tabela avaliacao
+model Avaliacao {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId // ID da avaliação
+  codUtilizador   String // Referência ao utilizador
+  avaliacao       String
+  comentario      String ?
+  dataCriacao     DateTime @default(now()) // Data de criação da avaliação
+}
+
+// Modelo para a tabela Notificacao
+model Notificacao {
+cod             String   @id @default(auto()) @map("_id") @db.ObjectId // ID da notificação
+codUtilizador   String // Referência ao utilizador
+assunto         String
+descricao       String
+estado          String
+dataCriacao     DateTime @default(now()) // Data de criação da notificação
+}
+
+// Modelo departamento
+model Departamento {
+  cod             String   @id @default(auto()) @map("_id") @db.ObjectId
+  nome            String
+}
+
